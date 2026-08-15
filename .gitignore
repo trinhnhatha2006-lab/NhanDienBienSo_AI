@@ -1,0 +1,27 @@
+# Môi trường Python
+.venv/
+.venv-train/
+
+# File tạm Python
+__pycache__/
+*.py[cod]
+
+# Kết quả nhận diện và train
+runs/
+training_runs/
+
+# Ảnh, video thử nghiệm
+BienSoXe/
+
+# Dữ liệu YOLO có dung lượng lớn
+datasets/license_plate/images/
+datasets/license_plate/labels/
+
+# Model AI
+*.pt
+*.onnx
+
+# Cấu hình riêng của máy
+.vscode/
+.env
+
