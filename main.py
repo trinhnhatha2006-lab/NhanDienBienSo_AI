@@ -123,10 +123,8 @@ def resolve_source_path(source: str | Path) -> Path:
 
 def ask_for_source() -> tuple[str | None, bool]:
     while True:
-        print("\nNhập đường dẫn ảnh/video, gõ cam để mở webcam, q để thoát")
+        print("\nNhập đường dẫn ảnh/video hoặc gõ cam để mở webcam")
         value = input("> ").strip()
-        if value.lower() == "q":
-            raise SystemExit(0)
         if value.lower() in {"cam", "camera", "webcam"}:
             return None, True
         try:

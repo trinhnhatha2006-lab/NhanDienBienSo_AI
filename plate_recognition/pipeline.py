@@ -464,7 +464,7 @@ class RecognitionPipeline:
             cv2.imshow(title, frame)
             while True:
                 key = cv2.waitKey(20) & 0xFF
-                if key in {ord("q"), 27}:
+                if key == 27:
                     break
                 try:
                     if cv2.getWindowProperty(title, cv2.WND_PROP_VISIBLE) < 1:
@@ -481,15 +481,11 @@ class RecognitionPipeline:
 
     @staticmethod
     def _preview_stream(frame: np.ndarray, kind: str) -> bool:
-        title = (
-            "Webcam nhan dien bien so - nhan q hoac Esc de dung"
-            if kind == "webcam"
-            else "Nhan dien bien so - nhan q hoac Esc de dung"
-        )
+        title = "Nhan dien bien so"
         try:
             cv2.imshow(title, frame)
             key = cv2.waitKey(1) & 0xFF
-            if key in {ord("q"), 27}:
+            if key == 27:
                 return True
             try:
                 return cv2.getWindowProperty(title, cv2.WND_PROP_VISIBLE) < 1

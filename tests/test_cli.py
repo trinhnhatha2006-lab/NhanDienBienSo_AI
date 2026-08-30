@@ -129,12 +129,6 @@ class InteractiveMenuTests(TemporarySourceFixture, unittest.TestCase):
         with patch("builtins.input", return_value="cam"):
             self.assertEqual(app.ask_for_source(), (None, True))
 
-    def test_q_exits_cleanly(self) -> None:
-        with patch("builtins.input", return_value="q"):
-            with self.assertRaises(SystemExit) as raised:
-                app.ask_for_source()
-        self.assertEqual(raised.exception.code, 0)
-
     def test_invalid_path_then_accepts_image(self) -> None:
         with patch(
             "builtins.input", side_effect=["khong-ton-tai.jpg", "xe_02.jpg"]

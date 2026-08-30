@@ -68,16 +68,14 @@ EasyOCR 1.7.2, PyTorch 2.13.0 CPU và OpenCV 5.0.0.
 3. Nhập vào terminal:
    - `xe_01.jpg` để nhận diện ảnh trong `BienSoXe`;
    - `video_1.mp4` để nhận diện video;
-   - `cam` để mở webcam;
-   - `q` để thoát chương trình.
+   - `cam` để mở webcam.
 
 Có thể nhập tên file trong `BienSoXe` hoặc dán một đường dẫn đầy đủ. Sau khi
 đóng một kết quả, chương trình quay lại phần nhập để có thể thử file khác mà
 không phải chạy lại `main.py`.
 
-Kết quả được in trên terminal và hiện trong cửa sổ OpenCV. Dấu **X**, phím
-`Esc` hoặc `q` đóng cửa sổ hiện tại rồi quay lại phần nhập. Chỉ khi nhập `q`
-tại terminal thì chương trình mới thoát hoàn toàn.
+Kết quả được in trên terminal và hiện trong cửa sổ OpenCV. Dấu **X** hoặc
+phím `Esc` đóng cửa sổ hiện tại rồi quay lại phần nhập.
 
 ### Chạy bằng lệnh
 
@@ -108,8 +106,8 @@ Trong video hoặc webcam, cùng một biển số xuất hiện liên tục qua
 chỉ được tính một lần. Chương trình so sánh đúng chuỗi đã chuẩn hóa, không tự
 ghép hai chuỗi gần giống nhau vì có thể làm nhầm hai xe khác nhau.
 
-Lịch sử này không được ghi ra file. Khi nhập `q` để tắt chương trình, bộ nhớ
-được xóa; lần mở `main.py` tiếp theo sẽ bắt đầu một phiên quét mới.
+Lịch sử này không được ghi ra file. Khi tắt chương trình, bộ nhớ được xóa;
+lần mở `main.py` tiếp theo sẽ bắt đầu một phiên quét mới.
 
 ## 6. Dataset
 
