@@ -9,6 +9,7 @@ __pycache__/
 # Kết quả nhận diện và train
 runs/
 training_runs/
+prediction_runs/
 
 # Ảnh, video thử nghiệm
 BienSoXe/
@@ -17,11 +18,12 @@ BienSoXe/
 datasets/license_plate/images/
 datasets/license_plate/labels/
 
-# Model AI
+# Model YOLO
 *.pt
 *.onnx
+!models/best.pt
 
-# Cấu hình riêng của máy
-.vscode/
+# VS Code: chỉ theo dõi cấu hình dùng chung của project
+.vscode/*
+!.vscode/settings.json
 .env
-
