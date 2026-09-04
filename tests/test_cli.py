@@ -20,15 +20,6 @@ class CliValidationTests(unittest.TestCase):
         parser = build_parser()
         return validate_args(parser, parser.parse_args(values))
 
-    def test_webcam_options(self) -> None:
-        args = self.parse(["--webcam", "--camera-index", "0"])
-        self.assertTrue(args.webcam)
-        self.assertEqual(args.camera_index, 0)
-
-    def test_rejects_source_and_webcam_together(self) -> None:
-        with self.assertRaises(SystemExit):
-            self.parse(["image.jpg", "--webcam"])
-
     def test_rejects_invalid_confidence(self) -> None:
         with self.assertRaises(SystemExit):
             self.parse(["image.jpg", "--confidence", "1.1"])
@@ -36,10 +27,6 @@ class CliValidationTests(unittest.TestCase):
     def test_does_not_offer_file_output_option(self) -> None:
         with self.assertRaises(SystemExit):
             self.parse(["image.jpg", "--save-output"])
-
-    def test_rejects_negative_camera_index(self) -> None:
-        with self.assertRaises(SystemExit):
-            self.parse(["--webcam", "--camera-index", "-1"])
 
     def test_accepts_custom_model(self) -> None:
         args = self.parse(["image.jpg", "--model", "model-khac.pt"])
@@ -109,25 +96,21 @@ class InteractiveMenuTests(TemporarySourceFixture, unittest.TestCase):
     def test_accepts_image_path(self) -> None:
         with patch("builtins.input", return_value="xe_02.jpg"):
             self.assertEqual(
-                app.ask_for_source(), (str(self.sample_image.resolve()), False)
+                app.ask_for_source(), str(self.sample_image.resolve())
             )
 
     def test_menu_accepts_powershell_style_image_path(self) -> None:
         pasted_path = f"& '{self.sample_image}'"
         with patch("builtins.input", return_value=pasted_path):
             self.assertEqual(
-                app.ask_for_source(), (str(self.sample_image.resolve()), False)
+                app.ask_for_source(), str(self.sample_image.resolve())
             )
 
     def test_accepts_video_path(self) -> None:
         with patch("builtins.input", return_value="video_1.mp4"):
             self.assertEqual(
-                app.ask_for_source(), (str(self.sample_video.resolve()), False)
+                app.ask_for_source(), str(self.sample_video.resolve())
             )
-
-    def test_cam_selects_webcam(self) -> None:
-        with patch("builtins.input", return_value="cam"):
-            self.assertEqual(app.ask_for_source(), (None, True))
 
     def test_invalid_path_then_accepts_image(self) -> None:
         with patch(
@@ -135,7 +118,7 @@ class InteractiveMenuTests(TemporarySourceFixture, unittest.TestCase):
         ):
             with patch("builtins.print") as mocked_print:
                 self.assertEqual(
-                    app.ask_for_source(), (str(self.sample_image.resolve()), False)
+                    app.ask_for_source(), str(self.sample_image.resolve())
                 )
 
         printed_text = "\n".join(
@@ -150,7 +133,7 @@ class InteractiveMenuTests(TemporarySourceFixture, unittest.TestCase):
         ):
             with patch("builtins.print") as mocked_print:
                 self.assertEqual(
-                    app.ask_for_source(), (str(self.sample_video.resolve()), False)
+                    app.ask_for_source(), str(self.sample_video.resolve())
                 )
 
         printed_text = "\n".join(
@@ -158,21 +141,6 @@ class InteractiveMenuTests(TemporarySourceFixture, unittest.TestCase):
             for call in mocked_print.call_args_list
         )
         self.assertIn("Không tìm thấy file", printed_text)
-
-    def test_camera_word_selects_webcam(self) -> None:
-        with patch("builtins.input", return_value="camera"):
-            self.assertEqual(app.ask_for_source(), (None, True))
-
-    def test_bad_input_then_cam_continues(self) -> None:
-        with patch("builtins.input", side_effect=["main.py", "cam"]):
-            with patch("builtins.print") as mocked_print:
-                self.assertEqual(app.ask_for_source(), (None, True))
-
-        printed_text = "\n".join(
-            " ".join(str(value) for value in call.args)
-            for call in mocked_print.call_args_list
-        )
-        self.assertIn("Chương trình chỉ nhận file ảnh hoặc video", printed_text)
 
     def test_main_reuses_one_pipeline_for_multiple_menu_choices(self) -> None:
         fake_model = self.base_dir / "best.pt"
@@ -198,9 +166,6 @@ class InteractiveMenuTests(TemporarySourceFixture, unittest.TestCase):
                     "duplicate_plates": [],
                 }
 
-            def process_webcam(self, camera_index, preview, ocr_interval):
-                raise AssertionError("Không dùng webcam trong test này")
-
         with (
             patch.object(app, "MODEL_PATH", fake_model),
             patch.object(app.sys, "argv", ["main.py"]),
@@ -208,8 +173,8 @@ class InteractiveMenuTests(TemporarySourceFixture, unittest.TestCase):
                 app,
                 "ask_for_source",
                 side_effect=[
-                    (str(self.root_image), False),
-                    (str(self.sample_video), False),
+                    str(self.root_image),
+                    str(self.sample_video),
                     SystemExit(0),
                 ],
             ),

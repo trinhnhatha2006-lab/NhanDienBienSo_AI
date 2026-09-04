@@ -169,7 +169,6 @@ class DirectModeTests(unittest.TestCase):
                 kind="video",
                 preview=False,
                 ocr_interval=1,
-                camera_index=None,
             )
 
         self.assertEqual(report["new_plates"], ["54-U5 7001"])
@@ -187,7 +186,6 @@ class DirectModeTests(unittest.TestCase):
                 kind="video",
                 preview=False,
                 ocr_interval=1,
-                camera_index=None,
             )
 
         self.assertEqual(report["recognized_texts"], ["59-S3 633.39"])
@@ -205,7 +203,6 @@ class DirectModeTests(unittest.TestCase):
                 kind="video",
                 preview=False,
                 ocr_interval=1,
-                camera_index=None,
             )
 
         self.assertEqual(report["new_plates"], ["54-U5 7001"])
@@ -273,11 +270,10 @@ class DirectModeTests(unittest.TestCase):
 
             report = pipeline._process_capture(
                 capture=capture,
-                source_label="camera:0",
-                kind="webcam",
+                source_label="video.mp4",
+                kind="video",
                 preview=False,
                 ocr_interval=10,
-                camera_index=0,
             )
 
             self.assertTrue(capture.released)
@@ -297,11 +293,10 @@ class DirectModeTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 pipeline._process_capture(
                     capture=capture,
-                    source_label="camera:0",
-                    kind="webcam",
+                    source_label="video.mp4",
+                    kind="video",
                     preview=False,
                     ocr_interval=10,
-                    camera_index=0,
                 )
 
         self.assertTrue(capture.released)
@@ -354,7 +349,7 @@ class DirectModeTests(unittest.TestCase):
                 return_value=0,
             ),
         ):
-            self.assertTrue(RecognitionPipeline._preview_stream(frame, "webcam"))
+            self.assertTrue(RecognitionPipeline._preview_stream(frame, "video"))
 
 
 if __name__ == "__main__":

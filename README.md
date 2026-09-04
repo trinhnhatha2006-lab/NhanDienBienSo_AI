@@ -2,7 +2,7 @@
 
 ## 1. Giới thiệu
 
-Chương trình nhận diện biển số xe từ ảnh, video hoặc webcam laptop.
+Chương trình nhận diện biển số xe từ ảnh hoặc video.
 
 Luồng xử lý:
 
@@ -21,7 +21,7 @@ NhanDienBienSo_AI/
 ├── plate_recognition/
 │   ├── detector.py           # Phát hiện biển số bằng YOLO
 │   ├── ocr.py                # Tiền xử lý ảnh và đọc ký tự
-│   ├── pipeline.py           # Xử lý ảnh, video và webcam
+│   ├── pipeline.py           # Xử lý ảnh và video
 │   └── types.py              # Dữ liệu dùng chung
 ├── models/
 │   ├── best.pt               # Model đang được sử dụng
@@ -67,8 +67,7 @@ EasyOCR 1.7.2, PyTorch 2.13.0 CPU và OpenCV 5.0.0.
 2. Mở `main.py` và bấm **Run Python File**.
 3. Nhập vào terminal:
    - `xe_01.jpg` để nhận diện ảnh trong `BienSoXe`;
-   - `video_1.mp4` để nhận diện video;
-   - `cam` để mở webcam.
+   - `video_1.mp4` để nhận diện video.
 
 Có thể nhập tên file trong `BienSoXe` hoặc dán một đường dẫn đầy đủ. Sau khi
 đóng một kết quả, chương trình quay lại phần nhập để có thể thử file khác mà
@@ -82,14 +81,12 @@ phím `Esc` đóng cửa sổ hiện tại rồi quay lại phần nhập.
 ```powershell
 .\.venv-train\Scripts\python.exe main.py ".\BienSoXe\xe_01.jpg"
 .\.venv-train\Scripts\python.exe main.py ".\BienSoXe\video_1.mp4"
-.\.venv-train\Scripts\python.exe main.py --webcam
 ```
 
-Thay đổi ngưỡng phát hiện hoặc webcam:
+Thay đổi ngưỡng phát hiện:
 
 ```powershell
 .\.venv-train\Scripts\python.exe main.py ".\BienSoXe\xe_01.jpg" --confidence 0.85
-.\.venv-train\Scripts\python.exe main.py --webcam --camera-index 0
 ```
 
 Chương trình chỉ hiển thị kết quả trên terminal và cửa sổ nhận diện, không
@@ -102,7 +99,7 @@ Các biển số đã nhận diện được ghi nhớ trong RAM khi `main.py` �
 chuỗi đó xuất hiện lại, chương trình báo `Đã quét trước đó` và hiển thị
 `DA QUET`.
 
-Trong video hoặc webcam, cùng một biển số xuất hiện liên tục qua nhiều frame
+Trong video, cùng một biển số xuất hiện liên tục qua nhiều frame
 chỉ được tính một lần. Chương trình so sánh đúng chuỗi đã chuẩn hóa, không tự
 ghép hai chuỗi gần giống nhau vì có thể làm nhầm hai xe khác nhau.
 

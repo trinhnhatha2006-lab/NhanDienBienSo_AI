@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Any
 
@@ -111,25 +110,6 @@ class RecognitionPipeline:
             kind="video",
             preview=preview,
             ocr_interval=ocr_interval,
-            camera_index=None,
-        )
-
-    def process_webcam(
-        self,
-        camera_index: int = 0,
-        preview: bool = True,
-        ocr_interval: int = 10,
-    ) -> dict[str, Any]:
-        if camera_index < 0:
-            raise ValueError("camera-index phải lớn hơn hoặc bằng 0.")
-        capture = self._open_webcam(camera_index)
-        return self._process_capture(
-            capture=capture,
-            source_label=f"camera:{camera_index}",
-            kind="webcam",
-            preview=preview,
-            ocr_interval=ocr_interval,
-            camera_index=camera_index,
         )
 
     def _process_capture(
@@ -139,7 +119,6 @@ class RecognitionPipeline:
         kind: str,
         preview: bool,
         ocr_interval: int,
-        camera_index: int | None,
     ) -> dict[str, Any]:
         if ocr_interval < 1:
             capture.release()
@@ -215,8 +194,6 @@ class RecognitionPipeline:
             "new_plates": sorted(new_plates),
             "duplicate_plates": sorted(duplicate_plates),
         }
-        if camera_index is not None:
-            report["camera_index"] = camera_index
         return report
 
     def _recognize_frame(
@@ -438,24 +415,6 @@ class RecognitionPipeline:
     def _read_image(path: Path) -> np.ndarray | None:
         data = np.fromfile(str(path), dtype=np.uint8)
         return cv2.imdecode(data, cv2.IMREAD_COLOR)
-
-    @staticmethod
-    def _open_webcam(camera_index: int) -> cv2.VideoCapture:
-        capture: cv2.VideoCapture | None = None
-        if os.name == "nt":
-            capture = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
-        if capture is None or not capture.isOpened():
-            if capture is not None:
-                capture.release()
-            capture = cv2.VideoCapture(camera_index)
-        if not capture.isOpened():
-            capture.release()
-            raise OSError(
-                f"Không thể mở camera {camera_index}. Hãy kiểm tra quyền Camera của "
-                "Windows, camera-index và ứng dụng khác đang sử dụng camera."
-            )
-        capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-        return capture
 
     @staticmethod
     def _preview_image(frame: np.ndarray) -> None:

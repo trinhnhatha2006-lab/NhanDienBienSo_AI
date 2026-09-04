@@ -63,14 +63,9 @@ def ensure_project_python() -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Nhận diện biển số xe từ ảnh, video hoặc webcam."
+        description="Nhận diện biển số xe từ ảnh hoặc video."
     )
     parser.add_argument("source", nargs="?", help="Đường dẫn ảnh hoặc video.")
-    parser.add_argument(
-        "--webcam",
-        action="store_true",
-        help="Nhận diện trực tiếp bằng webcam.",
-    )
     parser.add_argument(
         "--model",
         default=str(MODEL_PATH),
@@ -81,12 +76,6 @@ def build_parser() -> argparse.ArgumentParser:
         type=float,
         default=DEFAULT_CONFIDENCE,
         help="Ngưỡng phát hiện, mặc định 0.85.",
-    )
-    parser.add_argument(
-        "--camera-index",
-        type=int,
-        default=0,
-        help="Số thứ tự webcam, mặc định 0.",
     )
     return parser
 
@@ -121,14 +110,12 @@ def resolve_source_path(source: str | Path) -> Path:
     raise FileNotFoundError(f"Không tìm thấy file: {candidates[0].resolve()}")
 
 
-def ask_for_source() -> tuple[str | None, bool]:
+def ask_for_source() -> str:
     while True:
-        print("\nNhập đường dẫn ảnh/video hoặc gõ cam để mở webcam")
+        print("\nNhập đường dẫn ảnh hoặc video")
         value = input("> ").strip()
-        if value.lower() in {"cam", "camera", "webcam"}:
-            return None, True
         try:
-            return str(resolve_source_path(value)), False
+            return str(resolve_source_path(value))
         except (FileNotFoundError, ValueError) as exc:
             print(exc)
 
@@ -155,19 +142,15 @@ def print_report(report: dict[str, object]) -> None:
 def validate_args(
     parser: argparse.ArgumentParser, args: argparse.Namespace
 ) -> argparse.Namespace:
-    if args.source and args.webcam:
-        parser.error("Không dùng đường dẫn cùng lúc với --webcam.")
     if not 0 < args.confidence <= 1:
         parser.error("--confidence phải nằm trong khoảng (0, 1].")
-    if args.camera_index < 0:
-        parser.error("--camera-index phải lớn hơn hoặc bằng 0.")
     return args
 
 
 def main() -> int:
     parser = build_parser()
     args = validate_args(parser, parser.parse_args())
-    interactive = not args.source and not args.webcam
+    interactive = not args.source
 
     try:
         model = Path(args.model).expanduser()
@@ -198,22 +181,15 @@ def main() -> int:
     while True:
         try:
             if interactive:
-                source_value, use_webcam = ask_for_source()
+                source_value = ask_for_source()
             else:
-                source_value, use_webcam = args.source, args.webcam
+                source_value = args.source
 
-            if use_webcam:
-                report = pipeline.process_webcam(
-                    camera_index=args.camera_index,
-                    preview=True,
-                    ocr_interval=OCR_INTERVAL,
-                )
-            else:
-                report = pipeline.process(
-                    resolve_source_path(source_value),
-                    preview=True,
-                    ocr_interval=OCR_INTERVAL,
-                )
+            report = pipeline.process(
+                resolve_source_path(source_value),
+                preview=True,
+                ocr_interval=OCR_INTERVAL,
+            )
             print_report(report)
         except KeyboardInterrupt:
             print("\nĐã dừng chương trình.")
